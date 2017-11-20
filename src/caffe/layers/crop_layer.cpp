@@ -59,6 +59,13 @@ void CropLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
         // number of dimensions to crop, that is dimensions after the axis.
         crop_offset = param.offset(i - start_axis);
       }
+      // JRS: code from https://groups.google.com/forum/#!topic/caffe-users/-xJwBtctESY
+      else // Change here usually croped from the center, so the crop_offset is set to half of the difference
+      {
+
+          crop_offset = round((bottom[0]->shape(i) - bottom[1]->shape(i))/2.0f);
+          std::cout << "Crop resize: dim = " << i << ", new offset = " << crop_offset << "\n";
+      }
       // Check that the crop and offset are within the dimension's bounds.
       CHECK_GE(bottom[0]->shape(i) - crop_offset, bottom[1]->shape(i))
           << "the crop for dimension " << i << " is out-of-bounds with "
